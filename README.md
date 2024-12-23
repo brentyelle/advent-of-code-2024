@@ -14,3 +14,6 @@ My work on the [Advent of Code 2024](https://adventofcode.com/2024) challenge. I
       * `.argwhere` to find indices of all array elements equal to `'A'`
       * `.diag` to get all of the diagonals
     * This was the first day where I saw Part 2 and thought "Dang" since it wasn't as extendable from Part 1 as I'd hoped. Certainly a nice exercise in mini-optimizations like knowing that every X-MAS has `A` in the middle, and that `A`s around the edges can be ignored.
+5. **Python** (⭐⭐) — Dec 23, 2024
+    * Originally, I tried to solve this by creating a `dict` of all elements and recursively find all elements that could potentially follow them... but then I realized that I was wayyyy overthinking things, and I could just look up the rules in linear time (at least with this small number of rules) rather than overengineer a recursive solution.
+    * Fortunately for me on Part 2, the way that I checked the ordering for a "page update" was extremely amenable to implementing BubbleSort by essentially changing just one line, letting me solve it very easily.
