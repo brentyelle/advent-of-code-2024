@@ -6,7 +6,7 @@ OBSTACLE_CHAR = '#'
 STARTING_CHAR = '^'
 
 class Direction(Enum):
-    """The underlying numbers were chosen such that movement could be calculated branchlessly."""
+    """The underlying numbers were chosen such that the `position_triplet` in `follow_route()` could be calculated easily."""
     NORTH   = 0
     SOUTH   = 1
     EAST    = 2
@@ -40,7 +40,7 @@ def follow_route(lab_map : np.ndarray) -> tuple[np.ndarray, bool]:
     * a guard's starting position marked by `^`
     * obstacles marked by `#`\n
     Follows the path until the guard either goes out-of-bounds or follows an infinite loop."""
-    visit_counts    = np.zeros(shape=(lab_map.shape[0], lab_map.shape[1], 5), dtype=int)
+    visit_counts    = np.zeros(shape=(lab_map.shape[0], lab_map.shape[1], 4), dtype=int)
     obstacles       = tuple((i,j) for i,j in np.argwhere(lab_map == OBSTACLE_CHAR))
     current_pos     = tuple(np.argwhere(lab_map == STARTING_CHAR)[0])
     current_dir     = Direction.NORTH   # guard always begins northward
