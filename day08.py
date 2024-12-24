@@ -10,31 +10,34 @@ def process_file(filename : str) -> np.ndarray:
             lines.append(list(line.strip()))
     return np.array(lines)
 
-def find_nodes(grid : np.ndarray):
+def find_nodes(grid : np.ndarray) -> tuple[dict[str, set[tuple[int, int]]], set[tuple[int,int]]]:
     node_labels = [x for x in np.unique(grid) if x != '.']
-    nodes       = dict()
+    node_dict   = dict()
     node_points = set()
     for label in node_labels:
-        nodes[label] = {(i,j) for i,j in np.argwhere(grid == label)}
-        node_points.update(nodes[label])
-    return nodes, node_points
+        # we use a `set` because each location either is or isn't an antinode; multiplicity is irrelevant
+        node_dict[label] = {(i,j) for i,j in np.argwhere(grid == label)}
+        node_points.update(node_dict[label])
+    return node_dict, node_points
 
-def find_antinodes(grid : np.ndarray, node_dictionary : dict, depth : int):
+def find_antinodes(grid : np.ndarray, node_dictionary : dict[str, set[tuple[int, int]]], depth : int) -> set[tuple[int, int]]:
     HEIGHT = grid.shape[0]
     WIDTH  = grid.shape[1]
-    all_antinodes  = set()
-    for node in node_dictionary:
-        positions = set(node_dictionary[node])
-        for pos1 in positions:
-            p1 = np.array(pos1)
-            for pos2 in positions.difference({pos1}):
-                p2 = np.array(pos2)
+    antinodes  = set()
+    # we don't need the keys, but we need the values grouped by key, hence why we use a dict
+    for position_list in node_dictionary.values():
+        # pair off `each` with every other position in the same `position_list`
+        # (this is highly redundant, but our input is small enough that it doesn't matter)
+        for position1 in position_list:
+            p1 = np.array(position1)
+            for position2 in position_list.difference({position1}):
+                p2    = np.array(position2)
                 delta = p2 - p1
                 for n in range(1, depth+1):
-                    all_antinodes.add(tuple(p1 - n*delta))
-                    all_antinodes.add(tuple(p2 + n*delta))
+                    antinodes.add(tuple(p1 - n*delta))
+                    antinodes.add(tuple(p2 + n*delta))
     # filter out all the antinodes that are out-of-bounds
-    return {(i,j) for i,j in all_antinodes if 0 <= i < HEIGHT and 0 <= j < WIDTH}
+    return {(i,j) for i,j in antinodes if 0 <= i < HEIGHT and 0 <= j < WIDTH}
 
 def main1(filename):
     antenna_grid        = process_file(filename)
