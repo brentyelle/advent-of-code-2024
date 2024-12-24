@@ -1,14 +1,16 @@
 import numpy as np
 from enum import Enum
+import cProfile
 
 OBSTACLE_CHAR = '#'
 STARTING_CHAR = '^'
 
 class Direction(Enum):
-    NORTH = 0
-    EAST  = 1
-    SOUTH = 2
-    WEST  = 3
+    """The underlying numbers were chosen such that movement could be calculated branchlessly."""
+    NORTH   = 0
+    SOUTH   = 1
+    EAST    = 2
+    WEST    = 3
 
 def turn_right(dir: Direction) -> Direction:
     """Given a `Direction`, returns the `Direction` pointing 90° to the right (i.e., clockwise)."""
@@ -38,7 +40,7 @@ def follow_route(lab_map : np.ndarray) -> tuple[np.ndarray, bool]:
     * a guard's starting position marked by `^`
     * obstacles marked by `#`\n
     Follows the path until the guard either goes out-of-bounds or follows an infinite loop."""
-    visit_counts    = np.zeros(shape=lab_map.shape, dtype=int)
+    visit_counts    = np.zeros(shape=(lab_map.shape[0], lab_map.shape[1], 5), dtype=int)
     obstacles       = tuple((i,j) for i,j in np.argwhere(lab_map == OBSTACLE_CHAR))
     current_pos     = tuple(np.argwhere(lab_map == STARTING_CHAR)[0])
     current_dir     = Direction.NORTH   # guard always begins northward
@@ -48,14 +50,19 @@ def follow_route(lab_map : np.ndarray) -> tuple[np.ndarray, bool]:
 
     # until we go out of bounds or start looping
     while 0 <= current_pos[0] < MAX_HEIGHT and 0 <= current_pos[1] < MAX_WIDTH:
-        visit_counts[current_pos] += 1
-        # there are only 4 directions one can cross a point from, so if we repeat, we're stuck in a loop
-        # (a drawback is that we likely need to repeat potentially large loops up to 4 times before we detect them)
-        # (one way to shorten the time would be to store what direction we've crossed a point from)
-        if visit_counts[current_pos] > 4:
+        # position_triplet consists of current position and current direction
+        position_triplet = (current_pos[0], current_pos[1], current_dir.value)
+        visit_counts[position_triplet] += 1
+        # if we ever re-visit a position from the same direction, we're going in an infinite loop
+        if visit_counts[position_triplet] > 1:
             is_stuck_in_loop = True
             break
         # calculate where we're currently trying to go
+        """Turns out that this "smart" method was actually less efficient!"""
+        # NS_adjustment = current_dir.value%2 * current_dir.value
+        # EW_adjustment = abs(current_dir.value)//2 * np.sign(current_dir.value)
+        # next_pos_attempt = (current_pos[0] + NS_adjustment, current_pos[1] + EW_adjustment)
+        """And this method with a `match` statement was faster!"""
         match current_dir:
             case Direction.NORTH:
                 next_pos_attempt = (current_pos[0] - 1, current_pos[1]    )
@@ -74,7 +81,7 @@ def follow_route(lab_map : np.ndarray) -> tuple[np.ndarray, bool]:
         else:
             current_pos = next_pos_attempt
 
-    visited_list = [(i,j) for i,j in np.argwhere(visit_counts > 0)]
+    visited_list = [(i,j) for i,j in np.argwhere(np.sum(visit_counts, axis=2) > 0)]
     return visited_list, is_stuck_in_loop
 
 def main1(filename : str):
@@ -94,8 +101,9 @@ def main2(filename : str):
     position_counter = 0
     for i,j in visited_list:
         position_counter += 1
-        if position_counter % 100 == 0:
+        if position_counter % 300 == 0:
             print(f"trying position {position_counter} of {len(visited_list)}, found {infinite_loop_count} infinite loops so far")
+            break
         laboratory_map_plus_one = laboratory_map.copy()
         laboratory_map_plus_one[i,j] = OBSTACLE_CHAR
         _, did_loop = follow_route(laboratory_map_plus_one)
