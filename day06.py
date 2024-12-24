@@ -101,9 +101,8 @@ def main2(filename : str):
     position_counter = 0
     for i,j in visited_list:
         position_counter += 1
-        if position_counter % 300 == 0:
+        if position_counter % 100 == 0:
             print(f"trying position {position_counter} of {len(visited_list)}, found {infinite_loop_count} infinite loops so far")
-            break
         laboratory_map_plus_one = laboratory_map.copy()
         laboratory_map_plus_one[i,j] = OBSTACLE_CHAR
         _, did_loop = follow_route(laboratory_map_plus_one)
