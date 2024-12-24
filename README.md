@@ -21,3 +21,6 @@ My work on the [Advent of Code 2024](https://adventofcode.com/2024) challenge. I
     * The performance on Part 2 is lackluster, taking several minutes to complete. Nevertheless, it finds the right answer in a humanly-reasonable amount of time.
 7. **Python** (⭐⭐) — Dec 23, 2024
     * I was actually quite surprised how well my Part 1 solution could be extended to accomodate Part 2--I merely had to add a third operator and what it did, and everything else worked the same!
+8. **Python** (⭐⭐) — Dec 24, 2024
+    * The fact that Python supports sets was wonderful for this problem. The only minor headache I encountered was having to convert between `numpy.ndarray`s and `tuple`s... but that's hardly a real issue.
+    * I'm also not entirely convinced that I should've used a `dict` where I did in this problem... but it does work, so I ain't complaining.
