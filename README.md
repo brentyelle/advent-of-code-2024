@@ -17,3 +17,7 @@ My work on the [Advent of Code 2024](https://adventofcode.com/2024) challenge. I
 5. **Python** (⭐⭐) — Dec 23, 2024
     * Originally, I tried to solve this by creating a `dict` of all elements and recursively find all elements that could potentially follow them... but then I realized that I was wayyyy overthinking things, and I could just look up the rules in linear time (at least with this small number of rules) rather than overengineer a recursive solution.
     * Fortunately for me on Part 2, the way that I checked the ordering for a "page update" was extremely amenable to implementing BubbleSort by essentially changing just one line, letting me solve it very easily.
+6. **Python** (⭐⭐) — Dec 23, 2024
+    * The performance on Part 2 is lackluster, taking several minutes to complete. Nevertheless, it finds the right answer in a humanly-reasonable amount of time.
+7. **Python** (⭐⭐) — Dec 23, 2024
+    * I was actually quite surprised how well my Part 1 solution could be extended to accomodate Part 2--I merely had to add a third operator and what it did, and everything else worked the same!
